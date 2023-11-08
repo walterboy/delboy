@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dice Game</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 0;
+}
+
+h1 {
+    margin: 0;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+}
+
+.action-button {
+    background-color: #007BFF;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px;
+    transition: background-color 0.3s;
+}
+
+.action-button:hover {
+    background-color: #0056b3;
+}
+
+.dice-game {
+    background-color: #fff;
+    width: 300px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.balance {
+    display: flex;
+    justify-content: center;
+    font-weight: bold;
+    padding: 10px 0;
+}
+
+.label {
+    font-size: 16px;
+    margin: 5px;
+}
+
+.input {
+    padding: 5px;
+    width: 100%;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.dice {
+    font-size: 96px;
+    text-align: center;
+    line-height: 96px;
+    margin: 0 auto 20px;
+    font-weight: bold;
+    background-color: #f4f4f4;
+    color: #333;
+    border: 2px solid #333;
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.result {
+    font-weight: bold;
+    color: #007BFF;
+    margin: 20px 0;
+}
+
+.balance-amount {
+    font-size: 18px;
+    margin: 5px;
+}
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Dice Game</h1>
+    </header>
+    <main>
+        <section class="dice-game">
+            <div class="button-container">
+                <button id="deposit-button" class="action-button">Deposit</button>
+                <button id="withdraw-button" class="action-button">Withdraw</button>
+            </div>
+            <div class="balance">
+                <span id="balance-label" class="label">Balance:</span>
+                <span id="balance-amount" class="balance-amount" style="display: none">₦ 0</span>
+            </div>
+            <h2>Roll the Dice</h2>
+            <form id="bet-form">
+                <label for="bet-amount" class="label">Bet Amount:</label>
+                <input type="number" id="bet-amount" name="bet-amount" class="input" min="1" step="1" required>
+                <br>
+                <label for="bet-choice" class="label">Choose Your Side:</label>
+                <select id="bet-choice" name="bet-choice" class="input" required>
+                    <option value="⚀">Team A</option>
+                    <option value="⚁">Team B</option>
+                    <option value="⚂">Team C</option>
+                    <option value="⚃">Team D</option>
+                    <option value="⚄">Team E</option>
+                    <option value="⚅">Team F</option>
+                </select>
+                <br>
+                <button type="button" id="place-bet" class="action-button">Place Bet</button>
+            </form>
+            <div id="dice" class="dice">⚀</div>
+            <p id="result" class="result"></p>
+        </section>
+    </main>
+    <script src="script.js"></script>
+    <script>
+        let balance = 0;
+
+document.getElementById("withdraw-button").addEventListener("click", function () {
+    const withdrawAmount = parseFloat(prompt("Enter the withdraw amount:"));
+    if (!isNaN(withdrawAmount) && withdrawAmount <= balance) {
+        balance -= withdrawAmount;
+        updateBalance();
+    } else {
+        alert("Invalid or insufficient amount for withdrawal.");
+    }
+});
+
+document.getElementById("deposit-button").addEventListener("click", function () {
+    const depositAmount = parseFloat(prompt("Enter the deposit amount:"));
+    if (!isNaN(depositAmount)) {
+        balance += depositAmount;
+        updateBalance();
+    }
+});
+
+document.getElementById("place-bet").addEventListener("click", function () {
+    const betAmount = parseFloat(document.getElementById("bet-amount").value);
+    const betChoice = document.getElementById("bet-choice").value;
+    const diceValues = ["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"];
+    const randomIndex = Math.floor(Math.random() * diceValues.length);
+    const diceValue = diceValues[randomIndex];
+    const diceElement = document.getElementById("dice");
+    const resultElement = document.getElementById("result");
+
+    if (betAmount <= balance) {
+        const win = diceValue === betChoice;
+        if (win) {
+            balance += betAmount;
+        } else {
+            balance -= betAmount;
+        }
+
+        updateBalance();
+        diceElement.textContent = diceValue;
+        resultElement.textContent = `You rolled a ${diceValue}! ${win ? "You won!" : "You lost."}`;
+    } else {
+        resultElement.textContent = "Insufficient balance for this bet.";
+    }
+});
+
+function updateBalance() {
+    const balanceAmountElement = document.getElementById("balance-amount");
+    balanceAmountElement.textContent = `₦ ${balance}`;
+    balanceAmountElement.style.display = "block";
+}
+
+    </script>
+</body>
+</html>
